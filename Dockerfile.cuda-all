@@ -5,8 +5,8 @@ RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-ins
 
 RUN curl https://sh.rustup.rs -sSf | bash -s -- -y
 ENV PATH="/root/.cargo/bin:${PATH}"
-RUN rustup update stable
-RUN rustup default stable
+RUN rustup update nightly
+RUN rustup default nightly
 
 WORKDIR /mistralrs
 
