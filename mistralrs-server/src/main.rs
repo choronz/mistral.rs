@@ -143,7 +143,7 @@ struct Args {
     no_paged_attn: bool,
 
     /// Enable server throughput logging, supported in the server and with interactive mode
-    #[arg(long = "throughput", default_value_t = false)]
+    #[arg(short, long = "throughput", default_value_t = false)]
     throughput_log: bool,
 
     /// Number of tokens to batch the prompt step into. This can help with OOM errors when in the prompt step, but reduces performance.
@@ -468,7 +468,8 @@ async fn main() -> Result<()> {
     let mistralrs = builder.build();
 
     let port = args.port.expect("Interactive mode was not specified, so expected port to be specified. Perhaps you forgot `-i` or `--port`?");
-
+    // let http_port = args.http_port.unwrap_or(8000);
+    
     let app = get_router(mistralrs);
 
     let ip = if let Some(ref ip) = args.serve_ip {
