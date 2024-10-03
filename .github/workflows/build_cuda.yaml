@@ -30,6 +30,11 @@ jobs:
             - name: Delete huge unnecessary tools folder
               run: rm -rf /opt/hostedtoolcache
 
+            - name: Maximize build space
+              uses: AdityaGarg8/remove-unwanted-software@v4.1
+              with:
+                remove-android: 'true'
+
             - name: Free Disk Space (Ubuntu)
               uses: jlumbroso/free-disk-space@main
               with:
