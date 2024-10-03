@@ -15,6 +15,7 @@ jobs:
             compute_capability: [89]
           fail-fast: false
         runs-on: [ubuntu-latest]
+        environment: 'Prod'
         
         permissions:
             contents: write
@@ -29,10 +30,16 @@ jobs:
             - name: Delete huge unnecessary tools folder
               run: rm -rf /opt/hostedtoolcache
 
-            - name: Maximize build space
-              uses: AdityaGarg8/remove-unwanted-software@v4.1
+            - name: Free Disk Space (Ubuntu)
+              uses: jlumbroso/free-disk-space@v1.3.1
               with:
-                remove-android: 'true'  
+                tool-cache: false
+                # all of these default to true to skip
+                android: true
+                dotnet: true
+                haskell: true
+                large-packages: true
+                swap-storage: false
 
             - name: Initialize Docker Buildx
               uses: docker/setup-buildx-action@v3
@@ -54,35 +61,12 @@ jobs:
               if: github.event_name != 'pull_request'
               uses: docker/login-action@v3
               with:
-                registry: ghcr.io
-                username: ${{ github.actor }}
-                password: ${{ secrets.GITHUB_TOKEN }}
-
-            - name: Extract metadata (tags, labels) for Docker
-              id: meta-cuda
-              uses: docker/metadata-action@v5
-              with:
-                  images: |
-                    ghcr.io/${{env.GITHUB_REPOSITORY_OWNER_PART}}/${{env.GITHUB_REPOSITORY_NAME_PART}}
-                  flavor: |
-                    latest=false
-                  tags: |
-                    type=semver,pattern=cuda-${{matrix.compute_capability}}-{{version}}
-                    # type=semver,pattern=cuda-${{matrix.compute_capability}}-{{major}}.{{minor}}
-                    type=raw,value=cuda-${{matrix.compute_capability}}-latest,enable=${{ github.ref == format('refs/heads/{0}', github.event.repository.default_branch) }}
-                    # type=raw,value=cuda-${{matrix.compute_capability}}-sha-${{ env.GITHUB_SHA_SHORT }}
-
-            - name: Build and push Docker image
-              id: build-and-push-cuda
-              uses: docker/build-push-action@v6
-              with:
-                context: .
-                file: Dockerfile.cuda-all
-                push: ${{ github.event_name != 'pull_request' }}
-                platforms: 'linux/amd64'
-                tags: ${{ steps.meta-cuda.outputs.tags }}
-                labels: ${{ steps.meta-cuda.outputs.labels }}
-                build-args: |
-                  CUDA_COMPUTE_CAP=${{matrix.compute_capability}}
-                cache-from: type=local,src=/tmp/.buildx-cache
+                username: ${{ vars.DOCKERHUB_USER }}
+                password: ${{ secrets.DOCKERHUB_TOKEN }}
+      
+            - name: Build and Push
+              run: |
+                tag=cuda-${{matrix.compute_capability}}-latest
+                docker build . -f Dockerfile.cuda-all --build-arg max_jobs=3 -t kairos333/mistral.rs:${tag} --no-cache
+                docker push kairos333/mistral.rs:${tag}
             
