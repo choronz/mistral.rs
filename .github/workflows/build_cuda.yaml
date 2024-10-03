@@ -72,6 +72,10 @@ jobs:
               push: true
               tags: cuda-${{matrix.compute_capability}}-latest
               file: Dockerfile.cuda-all
+              cache-from: type=gha
+              cache-to: type=gha,mode=max
+              platform: platform=linux/amd64
+              
           # - name: Build and Push
           #   run: |
           #     tag=cuda-${{matrix.compute_capability}}-latest
