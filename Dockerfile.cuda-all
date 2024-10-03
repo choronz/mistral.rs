@@ -14,8 +14,10 @@ COPY . .
 
 ARG CUDA_COMPUTE_CAP=89
 ENV CUDA_COMPUTE_CAP=${CUDA_COMPUTE_CAP}
-ARG FEATURES="cuda cudnn flash-attn"
-RUN RUSTFLAGS="-Z threads=4" CUDA_NVCC_FLAGS="-fPIE" cargo build --release --workspace --exclude mistralrs-pyo3 --exclude mistralrs-vision --features "${FEATURES}"
+ARG FEATURES="flash-attn"
+ENV CUDA_COMPUTE_CAP=${CUDA_COMPUTE_CAP}
+
+RUN RUSTFLAGS="-Z threads=4" CUDA_NVCC_FLAGS="-fPIE" cargo build --release --workspace --exclude mistralrs-pyo3 --exclude mistralrs-vision --features "cuda cudnn ${FEATURES}"
 
 FROM nvidia/cuda:12.4.1-cudnn-runtime-ubuntu22.04 AS base
 
