@@ -71,6 +71,7 @@ jobs:
               context: .
               push: true
               tags: cuda-${{matrix.compute_capability}}-latest
+              file: Dockerfile.cuda-all
           # - name: Build and Push
           #   run: |
           #     tag=cuda-${{matrix.compute_capability}}-latest
