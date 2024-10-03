@@ -63,6 +63,7 @@ jobs:
               password: ${{ secrets.DOCKERHUB_TOKEN }}
     
           - name: Build and Push
+            run: |
               tag=cuda-${{matrix.compute_capability}}-latest
               docker build . -f Dockerfile.cuda-all --build-arg max_jobs=2 --build-arg CUDA_COMPUTE_CAP=${{ matrix.compute_capability }} -t kairos333/mistral.rs:${tag} --no-cache
               docker push kairos333/mistral.rs:${tag}
