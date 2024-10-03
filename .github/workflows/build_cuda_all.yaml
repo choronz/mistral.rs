@@ -35,13 +35,13 @@ jobs:
               with:
                 install: true
             
-            - name: Setup cache
-              uses: actions/cache@v3
-              with:
-                path: /tmp/.buildx-cache
-                key: ${{ runner.os }}-buildx-${{ github.sha }}
-                restore-keys: |
-                  ${{ runner.os }}-buildx-
+            # - name: Setup cache
+            #   uses: actions/cache@v3
+            #   with:
+            #     path: /tmp/.buildx-cache
+            #     key: ${{ runner.os }}-buildx-${{ github.sha }}
+            #     restore-keys: |
+            #       ${{ runner.os }}-buildx-
 
             - name: Inject slug/short variables
               uses: rlespinasse/github-slug-action@v4
@@ -83,6 +83,6 @@ jobs:
                 labels: ${{ steps.meta-cuda.outputs.labels }}
                 build-args: |
                   CUDA_COMPUTE_CAP=${{matrix.compute_capability}}
-                cache-from: type=local,src=/tmp/.buildx-cache
+                # cache-from: type=local,src=/tmp/.buildx-cache
             
             
