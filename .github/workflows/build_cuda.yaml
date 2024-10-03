@@ -33,13 +33,12 @@ jobs:
               uses: jlumbroso/free-disk-space@main
               with:
                 tool-cache: false
+                android: true
+                dotnet: true
+                haskell: true
+                large-packages: true
+                swap-storage: false
                 # docker-images: false
-            	  # all of these default to true to skip
-            	  android: true
-            	  dotnet: true
-            	  haskell: true
-            	  large-packages: true
-            	  swap-storage: false
 
             - name: Initialize Docker Buildx
               uses: docker/setup-buildx-action@v3
